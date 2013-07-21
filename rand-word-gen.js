@@ -108,26 +108,30 @@ Model.prototype.getRandomWord = function() {
     return output;
 }
 
-/*
-console.log("ContainsLoops(\"papapa\") = " + ContainsLoops("papapa"));
-console.log("ContainsLoops(\"pizzapizzapizza\") = " + ContainsLoops("pizzapizzapizza"));
-console.log("ContainsLoops(\"eeeeeeeeeeee\") = " + ContainsLoops("eeeeeeeeeeee"));
-console.log("ContainsLoops(\"papa\") = " + ContainsLoops("papa"));
-console.log("ContainsLoops(\"repeatedrepeatedrepeated\") = " + ContainsLoops("repeatedrepeatedrepeated"));
+if (require.main == module) {
+    /*
+    console.log("ContainsLoops(\"papapa\") = " + ContainsLoops("papapa"));
+    console.log("ContainsLoops(\"pizzapizzapizza\") = " + ContainsLoops("pizzapizzapizza"));
+    console.log("ContainsLoops(\"eeeeeeeeeeee\") = " + ContainsLoops("eeeeeeeeeeee"));
+    console.log("ContainsLoops(\"papa\") = " + ContainsLoops("papa"));
+    console.log("ContainsLoops(\"repeatedrepeatedrepeated\") = " + ContainsLoops("repeatedrepeatedrepeated"));
 
-var m = new Model(["papapapapapa",
-                   "helielielieli",
-                   "pizzapizzapizzapizza",
-                   "repeatedrepeatedrepeated",
-                   "valid"]);
-var m = new Model(["papapa"]);
-*/
+    var m = new Model(["papapapapapa",
+                       "helielielieli",
+                       "pizzapizzapizzapizza",
+                       "repeatedrepeatedrepeated",
+                       "valid"]);
+    var m = new Model(["papapa"]);
+    */
 
-var m = new Model(["APPLE", "APE", "GAPE", "ALE", "ZAP", "HALLO", "ACK", "SWALLOW",
-                   "FACE", "APPARATUS", "RAY", "RAIL", "HELP", "PLAY", "SWAY"]);
+    var m = new Model(["APPLE", "APE", "GAPE", "ALE", "ZAP", "HALLO", "ACK", "SWALLOW",
+                       "FACE", "APPARATUS", "RAY", "RAIL", "HELP", "PLAY", "SWAY"]);
 
-output = [];
-for (var i = 0; i < 10; i++) {
-    output.push(m.getRandomWord());
+    output = [];
+    for (var i = 0; i < 10; i++) {
+        output.push(m.getRandomWord());
+    }
+    console.log(output.join(" "));
+} else {
+    exports.RandWordGenerator = Model;
 }
-console.log(output.join(" "));
