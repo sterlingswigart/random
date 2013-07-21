@@ -1,4 +1,11 @@
 #!/usr/bin/env node
+// Generates random words based on an input dictionary by building up a graph where
+// the nodes are letters and the directed edges are built for each letter that follows.
+//
+// TODO: Generates interesting results when sequences within the input words can begin
+// and end words. For example, "ART" and "TRUCK" could generate the words "T"
+// and "TRTRT". Rather than only using single letters in our graph, we could somehow
+// represent sequences as well.
 
 function Next(next_node) {
     this.next_node = next_node;
@@ -12,6 +19,14 @@ function Node(letter) {
     // over fewer edges when generating words for a big dictionary.
     this.next = {};  // Letter -> Next
     this.totaltimes = 0;
+}
+
+Node.prototype.addNextNode = function(next_node) {
+    if (!(next_node.letter in this.next)) {
+        this.next[next_node.letter] = new Next(next_node);
+    }
+    this.next[next_node.letter].times++;
+    this.totaltimes++;
 }
 
 function Model(dict) {
@@ -30,20 +45,11 @@ function Model(dict) {
             }
             var next_node = this.nodes[letter];
 
-            // Link the previous node to the current letter.
-            if (!(letter in curr.next)) {
-                curr.next[letter] = new Next(next_node);
-            }
-            curr.next[letter].times++;
-            curr.totaltimes++;
-
+            curr.addNextNode(next_node);
             curr = next_node;
         }
 
-        if (!(this.end in curr.next)) {
-            curr.next["END"] = new Next(this.end);
-        }
-        curr.next["END"].times++;
+        curr.addNextNode(this.end);
     }
 }
 
@@ -69,15 +75,13 @@ var ContainsLoops = function(output) {
 }
 
 Model.prototype.getRandomWord = function() {
-    var curr = this.root;
     for (var retries = 0; retries < MAX_RETRIES; retries++) {
+        var curr = this.root;
         var too_long = false;
         var output = "";
         while (curr != this.end) {
             // Choose next node based on probability of next letter in dictionary.
-            // TODO: Subtraction doesn't work correctly. Evident with a
-            // single-word dictionary.
-            var count = Math.floor(Math.random() * curr.totaltimes);
+            var count = Math.ceil(Math.random() * curr.totaltimes);
             for (letter in curr.next) {
                 count -= curr.next[letter].times;
                 if (count <= 0) {
@@ -111,18 +115,19 @@ console.log("ContainsLoops(\"eeeeeeeeeeee\") = " + ContainsLoops("eeeeeeeeeeee")
 console.log("ContainsLoops(\"papa\") = " + ContainsLoops("papa"));
 console.log("ContainsLoops(\"repeatedrepeatedrepeated\") = " + ContainsLoops("repeatedrepeatedrepeated"));
 
-var m = new Model(["APPLE", "APE", "GAPE", "ALE", "ZAP", "HALLO", "ACK"]);
-var m = new Model(["papapa"]);
-*/
-
 var m = new Model(["papapapapapa",
                    "helielielieli",
                    "pizzapizzapizzapizza",
                    "repeatedrepeatedrepeated",
                    "valid"]);
+var m = new Model(["papapa"]);
+*/
+
+var m = new Model(["APPLE", "APE", "GAPE", "ALE", "ZAP", "HALLO", "ACK", "SWALLOW",
+                   "FACE", "APPARATUS", "RAY", "RAIL", "HELP", "PLAY", "SWAY"]);
 
 output = [];
-for (var i = 0; i < 1; i++) {
+for (var i = 0; i < 10; i++) {
     output.push(m.getRandomWord());
 }
 console.log(output.join(" "));
